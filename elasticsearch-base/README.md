@@ -1,12 +1,25 @@
 # 博文内容
 
+- 博文标题：
+- 博文地址：<http://www.youmeek.com/elasticsearch-introduction-and-install/>
+
+
+## 课程环境
+
+- **CentOS 7.3 x64**
+- JDK 版本：1.8（最低要求），主推：**JDK 1.8.0_121**
+- Elasticsearch 版本：**5.2.0**
+- 相关软件包百度云下载地址（密码：0yzd）：<http://pan.baidu.com/s/1qXQXZRm>
+- **注意注意：** Elasticsearch 安装过程请移步到我 Github 上的这套 Linux 教程：<https://github.com/judasn/Linux-Tutorial/blob/master/ELK-Install-And-Settings.md>
+
+------------------------
 
 ## Elasticsearch 介绍
 
 - 当前（201705）最新版本为：5.4
 - 官网：<https://www.elastic.co/>
 - Github 地址：<https://github.com/elastic/elasticsearch>
-- Elasticsearch 5.2 文档：<https://www.elastic.co/guide/en/elasticsearch/reference/5.2/index.html>
+- Elasticsearch 5.2 官网文档：<https://www.elastic.co/guide/en/elasticsearch/reference/5.2/index.html>
 
 
 ## Elasticsearch 场景
@@ -18,9 +31,9 @@
 - NoSQL 数据库
 
 
-## Elasticsearch 历史
+## Elasticsearch 经历
 
-- 搜索系统无处不在，对于我们 Java 程序员来讲，更多的是自己业务系统内的搜索。
+- 搜索系统无处不在，对于一般程序员来讲，更多的是自己业务系统内的搜索。
 - 传统数据库的搜索功能，在数据量大的情况下性能很差，所以必须要有一个搜索功能来替代这个。
 - 过去大家的方案是：Solr，现在大家的方案是：Elasticsearch。后者比前者新，能力更强，更符合现在时代。
 - 不管是 Solr 或是 Elasticsearch 底层都是：Lucene（比较复杂、底层）
@@ -49,12 +62,6 @@
 - 一般最小的 **高可用配置**，是 2 台服务器。而一般推荐是 5 台机子，最好是奇数台机子。
 
 
-## 课程环境
-
-- CentOS 7.3
-- JDK 版本：1.8（最低要求），主推：JDK 1.8.0_121
-- Elasticsearch 版本：5.2
-- Elasticsearch 安装过程请看我写的这套教程：<https://github.com/judasn/Linux-Tutorial/blob/master/ELK-Install-And-Settings.md>
 
 
 
