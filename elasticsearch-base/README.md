@@ -54,6 +54,7 @@
 - CentOS 7.3
 - JDK 版本：1.8（最低要求），主推：JDK 1.8.0_121
 - Elasticsearch 版本：5.2
+- Elasticsearch 安装过程请看我写的这套教程：<https://github.com/judasn/Linux-Tutorial/blob/master/ELK-Install-And-Settings.md>
 
 
 
