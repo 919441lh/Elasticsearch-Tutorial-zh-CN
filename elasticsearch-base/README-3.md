@@ -114,7 +114,7 @@ POST /product_index/product/3/_update
         "_id": "2",
         "_score": 1,
         "_source": {
-          "product_name": "博朗（Braun）欧乐 B 2000 3D 智能电动牙刷（白色）内附 2 刷头 1 旅行盒",
+          "product_name": "Braun toothbrush 2000 3D",
           "product_desc": "6 月 1 日 16 点秒杀，仅 329 元！限量 1000 支，抢完即止！带压力感应提醒，保护牙龈，高效清洁",
           "price": 499
         }
@@ -125,7 +125,7 @@ POST /product_index/product/3/_update
         "_id": "1",
         "_score": 1,
         "_source": {
-          "product_name": "飞利浦（PHILIPS）电动牙刷 HX6730/02 成人充电式声波震动牙刷雾白",
+          "product_name": "PHILIPS toothbrush HX6730/02",
           "product_desc": "【3?9 元，前 1000 名赠刷头，6 月 1 日 0 点火爆开抢，618 开门红巅峰 48 小时，抢先加入购物车】飞利浦畅销款，万千好评！深入净齿，智能美白！",
           "price": 399
         }
@@ -136,7 +136,7 @@ POST /product_index/product/3/_update
         "_id": "3",
         "_score": 1,
         "_source": {
-          "product_name": "星空太空 iphone7 蓝紫色 6s 繁星 iphone7 plus 宇宙 se 原创保护苹果 5 包手机壳",
+          "product_name": "iphone7 shell",
           "product_desc": "一说到星空，就有太多美好的记忆，美丽的浩瀚宇宙，有太多说不清的神秘之处，星空太美丽，太绚烂！",
           "price": 36
         }
