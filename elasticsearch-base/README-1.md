@@ -1,6 +1,6 @@
 # 博文内容
 
-- 博文标题：
+- 博文标题：1.1 Elasticsearch 介绍 + CentOS 7 下安装部署
 - 博文地址：<http://www.youmeek.com/elasticsearch-introduction-and-install/>
 
 
