@@ -58,10 +58,19 @@ PUT /product_index/product/3
     "product_desc" :  "一说到星空，就有太多美好的记忆，美丽的浩瀚宇宙，有太多说不清的神秘之处，星空太美丽，太绚烂！",
     "price" :  36.00
 }
+
+## POST 方式新增数据，不指向 ID 会自动生成一个 20 位的字符串 ID。
+POST /product_index/product
+{
+    "product_name" : "iphone6 shell",
+    "product_desc" :  "真正 360° 全包边 防指纹防摔",
+    "price" :  28.00
+}
 ```
 
 - 查询/检索 Document：
-	- 通过 ID 查询：`GET /product_index/product/3`
+	- 通过 ID 查询（默认返回所有元数据）：`GET /product_index/product/3`
+	- 通过 ID 查询（返回指定元数据）：`GET /product_index/product/3?_source=product_name,product_desc`
 	- 查询所有：`GET /product_index/product/_search`
 	- 通过商品名搜索，并价格倒序：`GET /product_index/product/_search?q=product_name:toothbrush&sort=price:desc`
 

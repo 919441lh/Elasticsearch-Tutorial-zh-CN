@@ -53,7 +53,7 @@
 - Near Realtime（NRT）：近实时（Elasticsearch 是有小延迟的，一般为 1 秒，一般情况是感受不到这个延迟的）。
 - Cluster：集群，可以一个或多个节点，这些节点共同保存这个集群的数据。集群有一个名称，很重要，各个节点的配置就需要用到这个名称，节点是用集群名称加入到集群中的。理论上单节点是最优方案，可惜只适合小数据量。对于各个环节的集群名称建议这样命名：youmeek-dev、youmeek-prod、youmeek-test
 - Node：节点，归属集群。如果整个集群就一个节点，那这个节点也就是这个集群本身。节点也有名称（默认是在启动的时候随机分配的 UUID），节点名称也可以自定义，一般都建议自定义，节点名称很重要编译运维中进行管理。
-- **Index：索引，类似数据库结构中的库，是一堆 document 的集合。索引名称必须全部是小写，比如：youmeek-index**。
+- **Index：索引，类似数据库结构中的库，是一堆 document 的集合。索引名称必须全部是小写，不能用下划线开头，不能包含逗号，比如：youmeek-index**。
 - **Type：类型，类似数据库结构中的表**。虽然现在一个 Index 可以有多个 Type，但是正在开发的 Elasticsearch 6 打算废弃这个特性了，一个 Index 只能有一个 Type，具体看：<https://elasticsearch.cn/article/158> 
 - **Document：文档，Elasticsearch 中的最小数据单元，类似数据库结构中的一行数据**。所以一行数据中也会有多个 field 也就是字段。Document 通常用 JSON 格式来表示。
 - Shard：分片。全称 primary shards（一般用在写操作）。Elasticsearch 可以将一个 Index 中的 Document 数据切分为多个 shard，分布在多台服务器上存储。每个 shard 都是一个 Lucene index，最多能有 Document 这么多（官网原文）：the limit is 2147483519 (Integer.MAX_VALUE - 128) documents。
