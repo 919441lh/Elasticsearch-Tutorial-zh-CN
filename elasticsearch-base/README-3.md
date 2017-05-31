@@ -75,6 +75,7 @@ POST /product_index/product
 	- 通过商品名搜索，并价格倒序：`GET /product_index/product/_search?q=product_name:toothbrush&sort=price:desc`
 
 - 更新整个 Document（需要带上所有属性，注意细节，这里改了 product_name）：
+- 这种方式的本质是：把旧版本标记为 deleted，实际还没删除。当 Elasticsearch 数据越来越多，会物理删除这些标记的数据。
 
 ``` json
 PUT /product_index/product/3
@@ -97,7 +98,7 @@ POST /product_index/product/3/_update
 ```
 
 - 删除 Document：
-	- 通过 ID 删除：`DELETE /product_index/product/3`
+	- 通过 ID 删除：`DELETE /product_index/product/3`，本质：标记为 deleted，等数据越来越大的情况 Elasticsearch 才去物理删除。
 
 
 ## Document 操作返回结果的几个重要参数讲解
