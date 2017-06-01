@@ -75,7 +75,7 @@ POST /product_index/product
 	- 通过商品名搜索，并价格倒序：`GET /product_index/product/_search?q=product_name:toothbrush&sort=price:desc`
 
 - 更新整个 Document（需要带上所有属性，注意细节，这里改了 product_name）：
-- 这种方式的本质是：把旧版本标记为 deleted，实际还没删除。当 Elasticsearch 数据越来越多，会物理删除这些标记的数据。
+- 这种方式的本质是：软删除。把旧版本标记为 deleted，实际还没物理删除，该条数据的 _version 元数据其实会再 +1 的。如果你再 PUT 下还是这个 ID 数据进去，_version 还是会继续 +1。当 Elasticsearch 数据越来越多，会物理删除这些标记的数据。
 
 ``` json
 PUT /product_index/product/3
