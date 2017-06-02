@@ -55,6 +55,7 @@ PUT /product_index/product/222
 - 核心：
 	- Elasticsearch 内部的 _version 只要等于当前数据存储的 _version 值即可修改成功。
 
+- 下面是全量更新的操作测试：
 - 客户端 1 执行：
 
 ``` json
@@ -124,7 +125,7 @@ PUT /product_index/product/222?version=5&version_type=external
 }
 ```
 
-
+- partial update 更新方式内置乐观锁并发控制
 
 
 

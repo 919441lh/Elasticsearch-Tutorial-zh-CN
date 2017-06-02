@@ -86,7 +86,7 @@ PUT /product_index/product/3
 }
 ```
 
-- 更新 Document 其中一个 field：
+- 更新 Document 其中一个 field：（这种叫做：partial update，整个流程本质跟全量更新差不多，都是先把旧的标记为 deleted，新的数据创建。只是查询这个过程是在 Elasticsearch 内部，效率更高。）
 
 ``` json
 POST /product_index/product/3/_update
