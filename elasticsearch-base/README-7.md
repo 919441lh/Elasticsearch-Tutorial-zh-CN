@@ -10,7 +10,8 @@
 - JDK 版本：1.8（最低要求），主推：**JDK 1.8.0_121**
 - Elasticsearch 版本：**5.2.0**
 - 相关软件包百度云下载地址（密码：0yzd）：<http://pan.baidu.com/s/1qXQXZRm>
-- **注意注意：** Elasticsearch 安装过程请移步到我 Github 上的这套 Linux 教程：<https://github.com/judasn/Linux-Tutorial/blob/master/ELK-Install-And-Settings.md>
+- **注意注意：** Elasticsearch、Kibana 安装过程请移步到我 Github 上的这套 Linux 教程：<https://github.com/judasn/Linux-Tutorial/blob/master/ELK-Install-And-Settings.md>
+- Elasticsearch 和 Kibana 都要安装。后面的教程都是在 Kibana 的 Dev Tools 工具上执行的命令。
 
 ------------------------
 
@@ -124,6 +125,7 @@ GET /product_index/product/_mget
 ## bulk 批量增删改
 
 - **特别注意：bulk 对 JSON 有严格的要求，每个整体的 json 串不能换行，只能同一行。多个整体的 json 串和 json 串之间，必须要换行。可能 kibana Dev Tools 语法解析上会提示有错误，但是不用管它。**
+- bulk 的格式要求官网资料：[Bulk API](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html)、[Cheaper in Bulk](https://www.elastic.co/guide/en/elasticsearch/guide/current/bulk.html)
 - 可以是多个 JSON 组合起来，按 JSON 顺序执行。
 - 顺序执行过程中，前面的操作失败，不会影响后续的操作。
 - 为了更加清晰表达，我这里不组合起来，拆分开来，但是你们可以考虑组合起来。

@@ -10,7 +10,8 @@
 - JDK 版本：1.8（最低要求），主推：**JDK 1.8.0_121**
 - Elasticsearch 版本：**5.2.0**
 - 相关软件包百度云下载地址（密码：0yzd）：<http://pan.baidu.com/s/1qXQXZRm>
-- **注意注意：** Elasticsearch 安装过程请移步到我 Github 上的这套 Linux 教程：<https://github.com/judasn/Linux-Tutorial/blob/master/ELK-Install-And-Settings.md>
+- **注意注意：** Elasticsearch、Kibana 安装过程请移步到我 Github 上的这套 Linux 教程：<https://github.com/judasn/Linux-Tutorial/blob/master/ELK-Install-And-Settings.md>
+- Elasticsearch 和 Kibana 都要安装。后面的教程都是在 Kibana 的 Dev Tools 工具上执行的命令。
 
 ------------------------
 
@@ -58,7 +59,7 @@
 - **Document：文档，Elasticsearch 中的最小数据单元，类似数据库结构中的一行数据**。所以一行数据中也会有多个 field 也就是字段。Document 通常用 JSON 格式来表示。
 - Shard：分片。全称 primary shards（一般用在写操作）。Elasticsearch 可以将一个 Index 中的 Document 数据切分为多个 shard，分布在多台服务器上存储。每个 shard 都是一个 Lucene index，最多能有 Document 这么多（官网原文）：the limit is 2147483519 (Integer.MAX_VALUE - 128) documents。
 - Replica：副本。全称 replica shards（一般读操作可以被分配到进行使用）。Replica 主要用来保证高可用（故障转移）、数据备份、增强高吞吐的并行搜索。
-- 假设我们现在有 2 台机子，要做一个这样的环境：2 台机子当做 2 个 Node 组成 1 个 Cluster。现在创建 1 个 Index，默认会有 5 个 primary shards（创建的时候也可以指定其他数量，创建完成后是不可修改的）。5 个 primary shards 分片各自有 1 个 Replica 副本分片用作备份，则这两台机子分片最终结果是：有 5 个 primary shards，有 5 个 replica shards 与之对应。
+- 假设我们现在有 2 台机子，要做一个这样的环境：2 台机子当做 2 个 Node 组成 1 个 Cluster。现在创建 1 个 Index，默认会有 5 个 primary shards（创建的时候也可以指定其他数量，创建完成后是不可修改的，因为跟数据存储时候的路由功能有关系，具体可以看：[路由字段资料](https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping-routing-field.html)、[自定义路由字段](https://www.elastic.co/blog/customizing-your-document-routing)）。5 个 primary shards 分片各自有 1 个 Replica 副本分片用作备份，则这两台机子分片最终结果是：有 5 个 primary shards，有 5 个 replica shards 与之对应。
 - 一般最小的 **高可用配置**，是 2 台服务器。而一般推荐是 5 台机子，最好是奇数台机子。
 - 如果是 5 台机子可以这样规划：两台节点作为 master ，这两个节点都是作为 commander 统筹集群层面的事务，取消这两台的 data 权利。然后在规划出三个节点的 data 集群，取消这三个节点的 master 权利。让他们安心的做好数据存储和检索服务。这样做的好处，就是职责分明，可以最大限度的防止 master 节点有事 data 节点，导致不稳定因素发生。比如 data 节点的数据复制，数据平衡，路由等等，直接影响 master 的稳定性。进而可能会发生脑裂问题。
 

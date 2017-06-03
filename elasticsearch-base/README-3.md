@@ -10,7 +10,8 @@
 - JDK 版本：1.8（最低要求），主推：**JDK 1.8.0_121**
 - Elasticsearch 版本：**5.2.0**
 - 相关软件包百度云下载地址（密码：0yzd）：<http://pan.baidu.com/s/1qXQXZRm>
-- **注意注意：** Elasticsearch 安装过程请移步到我 Github 上的这套 Linux 教程：<https://github.com/judasn/Linux-Tutorial/blob/master/ELK-Install-And-Settings.md>
+- **注意注意：** Elasticsearch、Kibana 安装过程请移步到我 Github 上的这套 Linux 教程：<https://github.com/judasn/Linux-Tutorial/blob/master/ELK-Install-And-Settings.md>
+- Elasticsearch 和 Kibana 都要安装。后面的教程都是在 Kibana 的 Dev Tools 工具上执行的命令。
 
 ------------------------
 
@@ -59,6 +60,20 @@ PUT /product_index/product/3
     "price" :  36.00
 }
 
+PUT /product_index/product/4
+{
+    "product_name" : "iphone7 shell4",
+    "product_desc" :  "一说到星空4，就有太多美好的记忆，美丽的浩瀚宇宙，有太多说不清的神秘之处，星空太美丽，太绚烂！",
+    "price" :  36.00
+}
+
+PUT /product_index/product/5
+{
+    "product_name" : "iphone7 shell5",
+    "product_desc" :  "一说到星空5，就有太多美好的记忆，美丽的浩瀚宇宙，有太多说不清的神秘之处，星空太美丽，太绚烂！",
+    "price" :  36.00
+}
+
 ## POST 方式新增数据，不指向 ID 会自动生成一个 20 位的字符串 ID。
 POST /product_index/product
 {
@@ -71,9 +86,21 @@ POST /product_index/product
 - 查询/检索 Document：
 	- 通过 ID 查询（默认返回所有元数据）：`GET /product_index/product/3`
 	- 通过 ID 查询（返回指定元数据）：`GET /product_index/product/3?_source=product_name,product_desc`
-	- 查询所有：`GET /product_index/product/_search`
+	- 查询指定索引的所有数据：`GET /product_index/product/_search`
+	- 设置查询超时：`GET /product_index/product/_search?timeout=5s`，[官网资料](https://www.elastic.co/guide/en/elasticsearch/reference/5.2/search-request-body.html)
+	- 查询多个索引：`GET /product_index,order_index/_search`
+	- 查询多个索引、多个类型：`GET /product_index,order_index/product,order/_search`
+	- 查询所有索引、多个类型：`GET /_all/product,order/_search`
+	- 匹配符模糊查询多个索引：`GET /product_*/_search`
 	- 通过商品名搜索，并价格倒序：`GET /product_index/product/_search?q=product_name:toothbrush&sort=price:desc`
-
+- 普通分页查询：
+	- 查询所有结果（假设一共 5 条数据）：`GET /product_index/product/_search`
+	- 普通分页（查询第 1 页，每页 2 条数据。from 不是页数，是第几条数据开始）：`GET /product_index/product/_search?from=0&size=2`
+	- 普通分页（查询第 2 页，每页 2 条数据。from 不是页数，是第几条数据开始）：`GET /product_index/product/_search?from=2&size=2`
+	- 普通分页（查询第 3 页，每页 2 条数据。from 不是页数，是第几条数据开始）：`GET /product_index/product/_search?from=4&size=2`
+- 深度分页（Deep Paging）：
+	- 深度分页的机制过程可以看这篇：[使用scroll实现Elasticsearch数据遍历和深度分页](http://lxwei.github.io/posts/%E4%BD%BF%E7%94%A8scroll%E5%AE%9E%E7%8E%B0Elasticsearch%E6%95%B0%E6%8D%AE%E9%81%8D%E5%8E%86%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%88%86%E9%A1%B5.html)
+	- 简单讲就是，用 from&size 这样的方式查询大页数是很耗 CPU、IO、内存、网络，所以对于大分页都是被避免的。你可以看下 Google、百度、淘宝、京东等网站的搜索结果页面，一般最多 100 页。
 - 更新整个 Document（需要带上所有属性，注意细节，这里改了 product_name）：
 - 这种方式的本质是：软删除。把旧版本标记为 deleted，实际还没物理删除，该条数据的 _version 元数据其实会再 +1 的。如果你再 PUT 下还是这个 ID 数据进去，_version 还是会继续 +1。当 Elasticsearch 数据越来越多，会物理删除这些标记的数据。
 
@@ -116,7 +143,7 @@ POST /product_index/product/3/_update
   },
   "hits": {
     "total": 3, ## 查询结果的数量
-    "max_score": 1, ## 最大相关数分数是 1
+    "max_score": 1, ## 最大相关数分数是 1，每一条查询出来的结果数据，跟 search 条件越相关的，排名越靠前，分数也就越大。
     "hits": [ ## 查询结果的详细数据集合
       {
         "_index": "product_index",
