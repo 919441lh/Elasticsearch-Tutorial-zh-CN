@@ -93,6 +93,7 @@ POST /product_index/product
 	- 查询所有索引、多个类型：`GET /_all/product,order/_search`
 	- 匹配符模糊查询多个索引：`GET /product_*/_search`
 	- 通过商品名搜索，并价格倒序：`GET /product_index/product/_search?q=product_name:toothbrush&sort=price:desc`
+	- 通过商品名搜索（商品名称不等于搜索词，这里用了减号），并价格倒序：`GET /product_index/product/_search?q=-product_name:toothbrush&sort=price:desc`
 - 普通分页查询：
 	- 查询所有结果（假设一共 5 条数据）：`GET /product_index/product/_search`
 	- 普通分页（查询第 1 页，每页 2 条数据。from 不是页数，是第几条数据开始）：`GET /product_index/product/_search?from=0&size=2`
@@ -102,7 +103,7 @@ POST /product_index/product
 	- 深度分页的机制过程可以看这篇：[使用scroll实现Elasticsearch数据遍历和深度分页](http://lxwei.github.io/posts/%E4%BD%BF%E7%94%A8scroll%E5%AE%9E%E7%8E%B0Elasticsearch%E6%95%B0%E6%8D%AE%E9%81%8D%E5%8E%86%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%88%86%E9%A1%B5.html)
 	- 简单讲就是，用 from&size 这样的方式查询大页数是很耗 CPU、IO、内存、网络，所以对于大分页都是被避免的。你可以看下 Google、百度、淘宝、京东等网站的搜索结果页面，一般最多 100 页。
 - 更新整个 Document（需要带上所有属性，注意细节，这里改了 product_name）：
-- 这种方式的本质是：软删除。把旧版本标记为 deleted，实际还没物理删除，该条数据的 _version 元数据其实会再 +1 的。如果你再 PUT 下还是这个 ID 数据进去，_version 还是会继续 +1。当 Elasticsearch 数据越来越多，会物理删除这些标记的数据。
+	- 这种方式的本质是：软删除。把旧版本标记为 deleted，实际还没物理删除，该条数据的 _version 元数据其实会再 +1 的。如果你再 PUT 下还是这个 ID 数据进去，_version 还是会继续 +1。当 Elasticsearch 数据越来越多，会物理删除这些标记的数据。
 
 ``` json
 PUT /product_index/product/3

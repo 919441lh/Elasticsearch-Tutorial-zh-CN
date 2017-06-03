@@ -1,6 +1,6 @@
 # 博文内容
 
-- 博文标题：1.2 Elasticsearch 集群的管理
+- 博文标题：1.2 Elasticsearch 索引集群的管理
 - 博文地址：<http://www.youmeek.com/elasticsearch-cluster/>
 
 
@@ -22,7 +22,7 @@
 - Github 地址：<https://github.com/elastic/elasticsearch>
 - Elasticsearch 5.2 官网文档：<https://www.elastic.co/guide/en/elasticsearch/reference/5.2/index.html>
 
-## Elasticsearch 集群简单操作
+## Elasticsearch 索引简单操作
 
 - 上一篇章我们已经安装了 Elasticsearch 和 Kibana，所以我们现在启动 Elasticsearch 和 Kibana 访问：<http://192.168.1.127:5601/app/kibana#/dev_tools/console?_g=()>，如下图：
 - 需要注意的细节是：Kibana Dev Tools 上面可以写多条 DSL 语句，光标放在哪一条上面，那一条后面有一个播放号可以单独执行，所以没必要删掉旧的语句。
@@ -39,7 +39,7 @@
 	- 查询多个索引配置信息：`GET /product_index,order_index/_settings`
 	- 查询所有索引配置信息：`GET /_all/_settings`
 
-## Elasticsearch 集群较复杂操作
+## Elasticsearch 索引较复杂操作
 
 - 新增索引，并指定 primary shards 和 replica shards 数量。
 
@@ -55,6 +55,7 @@ PUT /order_index
 }
 ```
 
+- 设置 mapping 新增索引：
 
 ``` json
 
