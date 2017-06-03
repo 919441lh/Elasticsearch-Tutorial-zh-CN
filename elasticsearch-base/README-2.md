@@ -55,10 +55,60 @@ PUT /order_index
 }
 ```
 
-- 设置 mapping 新增索引：
+- 新增索引并设置 mapping（Dynamic Mapping）：
+- mapping 你可以理解为是传统数据库中的设置表结构一样的作用，比如有个字段叫做 introduce，传统数据库文本字段你会考虑设置为：char、varchar、text，是否为空，是否有默认值等。
+- Elasticsearch 中的 mapping 类似上面，因为你一样要考虑比如这个字段：article_title 是否设置为 text 类型，要不要分词等。 
+- 下面的 mapping 使用了 ik 分词器（5.2.0 版本）。field 新增后是不能修改的。
 
 ``` json
-
+PUT /product_index
+{
+  "settings": {
+    "refresh_interval": "5s",
+    "number_of_shards": 5,
+    "number_of_replicas": 1
+  },
+  "mappings": {
+    "product": {
+      "properties": {
+        "id": {
+          "type": "text",
+          "index": "not_analyzed"
+        },
+        "product_name": {
+          "type": "text",
+          "store": "no",
+          "term_vector": "with_positions_offsets",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_max_word",
+          "boost": 5
+        },
+        "product_desc": {
+          "type": "text",
+          "index": "not_analyzed"
+        },
+        "price": {
+          "type": "double",
+          "index": "not_analyzed"
+        },
+        "created_date_time": {
+          "type": "date",
+          "index": "not_analyzed",
+          "format": "basic_date_time"
+        },
+        "last_modified_date_time": {
+          "type": "date",
+          "index": "not_analyzed",
+          "format": "basic_date_time"
+        },
+        "version": {
+          "type": "long",
+          "index": "no"
+        }
+      }
+    }
+  }
+}
 ```
 
 
