@@ -26,24 +26,24 @@ public class BaseDemo {
 		// 先构建client，两个参数分别是：cluster.name 固定参数代表后面参数的含义，集群名称
 		Settings settings = Settings.builder().put("cluster.name", "youmeek-cluster").build();
 
-		TransportClient client = new PreBuiltTransportClient(settings).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("192.168.1.127"), 9300));
+		TransportClient transportClient = new PreBuiltTransportClient(settings).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("192.168.1.127"), 9300));
 
-		create(client);
-		update(client);
-		query(client);
-		delete(client);
+		create(transportClient);
+		update(transportClient);
+		query(transportClient);
+		delete(transportClient);
 
-		client.close();
+		transportClient.close();
 	}
 
 
 	/**
 	 * 创建
 	 *
-	 * @param client
+	 * @param transportClient
 	 */
-	private static void create(TransportClient client) throws IOException {
-		IndexResponse response = client.prepareIndex("product_index", "product", "1")
+	private static void create(TransportClient transportClient) throws IOException {
+		IndexResponse indexResponse = transportClient.prepareIndex("product_index", "product", "1")
 				.setSource(XContentFactory.jsonBuilder()
 						.startObject()
 						.field("product_name", "飞利浦电动牙刷 HX6700")
@@ -54,47 +54,47 @@ public class BaseDemo {
 						.field("version", 1)
 						.endObject())
 				.get();
-		logger.info("--------------------------------：" + response.getResult());
+		logger.info("--------------------------------：" + indexResponse.getResult());
 	}
 
 	/**
 	 * 获取
 	 *
-	 * @param client
+	 * @param transportClient
 	 * @throws IOException
 	 */
-	private static void query(TransportClient client) throws IOException {
-		GetResponse response = client.prepareGet("product_index", "product", "1").get();
-		logger.info("--------------------------------：" + response.getSourceAsString());
+	private static void query(TransportClient transportClient) throws IOException {
+		GetResponse getResponse = transportClient.prepareGet("product_index", "product", "1").get();
+		logger.info("--------------------------------：" + getResponse.getSourceAsString());
 
 	}
 
 	/**
 	 * 修改
 	 *
-	 * @param client
+	 * @param transportClient
 	 * @throws IOException
 	 */
-	private static void update(TransportClient client) throws IOException {
-		UpdateResponse response = client.prepareUpdate("product_index", "product", "1")
+	private static void update(TransportClient transportClient) throws IOException {
+		UpdateResponse updateResponse = transportClient.prepareUpdate("product_index", "product", "1")
 				.setDoc(XContentFactory.jsonBuilder()
 						.startObject()
 						.field("product_name", "飞利浦电动牙刷 HX6700 促销优惠")
 						.endObject())
 				.get();
-		logger.info("--------------------------------：" + response.getResult());
+		logger.info("--------------------------------：" + updateResponse.getResult());
 
 	}
 
 	/**
 	 * 删除
 	 *
-	 * @param client
+	 * @param transportClient
 	 * @throws IOException
 	 */
-	private static void delete(TransportClient client) throws IOException {
-		DeleteResponse response = client.prepareDelete("product_index", "product", "1").get();
-		logger.info("--------------------------------：" + response.getResult());
+	private static void delete(TransportClient transportClient) throws IOException {
+		DeleteResponse deleteResponse = transportClient.prepareDelete("product_index", "product", "1").get();
+		logger.info("--------------------------------：" + deleteResponse.getResult());
 	}
 
 }
