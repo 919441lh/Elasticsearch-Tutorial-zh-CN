@@ -340,7 +340,6 @@ GET /product_index/product/_search
 
 - bool 下包括：must（必须匹配），must_not（必须不匹配），should（没有强制匹配），filter（过滤）
 
-
 ``` json
 GET /product_index/product/_search
 {
@@ -378,6 +377,9 @@ GET /product_index/product/_search
   }
 }
 ```
+
+- 下面还用到自定义排序。
+- 排序最好别用到字符串字段上。因为字符串字段会进行分词，Elasticsearch 默认是拿分词后的某个词去进行排序，排序结果往往跟我们想象的不一样。解决这个办法是在设置 mapping 的时候，多个这个字段设置一个 fields raw，让这个不进行分词，然后查询排序的时候使用这个 raw，具体看这里：<https://www.elastic.co/guide/cn/elasticsearch/guide/current/multi-fields.html>
 
 ``` json
 GET /product_index/product/_search
