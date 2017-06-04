@@ -32,8 +32,10 @@
 - 查询集群健康状况：`GET /_cat/health?v`
 - 查询集群中有哪些索引：`GET /_cat/indices?v`
 - 简单的索引操作：
-	- 新增索引：`PUT /product_index?pretty`
-	- 删除指定索引：`DELETE /product_index?pretty`
+	- 新增索引：`PUT /product_index`
+	- 删除指定索引：`DELETE /product_index`
+	- 删除指定多个索引：`DELETE /product_index,order_index`
+	- 删除匹配符索引：`DELETE /product_*`
 	- 删除所有索引：`DELETE /_all`
 	- 查询索引配置信息：`GET /product_index/_settings`
 	- 查询多个索引配置信息：`GET /product_index,order_index/_settings`
@@ -52,6 +54,15 @@ PUT /order_index
       "number_of_replicas": 1
     }
   }
+}
+```
+
+- 新增完索引后，更改 replica shards 数量：
+
+``` json
+PUT /order_index/_settings
+{
+	"number_of_replicas": 2
 }
 ```
 

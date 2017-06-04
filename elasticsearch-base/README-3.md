@@ -102,6 +102,35 @@ POST /product_index/product
 - 深度分页（Deep Paging）：
 	- 深度分页的机制过程可以看这篇：[使用scroll实现Elasticsearch数据遍历和深度分页](http://lxwei.github.io/posts/%E4%BD%BF%E7%94%A8scroll%E5%AE%9E%E7%8E%B0Elasticsearch%E6%95%B0%E6%8D%AE%E9%81%8D%E5%8E%86%E5%92%8C%E6%B7%B1%E5%BA%A6%E5%88%86%E9%A1%B5.html)
 	- 简单讲就是，用 from&size 这样的方式查询大页数是很耗 CPU、IO、内存、网络，所以对于大分页都是被避免的。你可以看下 Google、百度、淘宝、京东等网站的搜索结果页面，一般最多 100 页。
+	- 解决办法用：scroll，一般用于一批一批处理数据，比如做定时任务处理某一批大数据的时候。
+	- scroll = 1m 表示用来缓存时间
+	- "size": 2 用来控制查询结果数量
+
+``` json
+GET /product_index/product/_search?scroll=1m
+{
+  "query": {
+    "match_all": {}
+  },
+  "sort": [
+    "_doc"
+  ],
+  "size": 2
+}
+```
+
+- 上面的查询结果会返回一个 scroll_id，下面的查询可以用 scroll_id 继续查询。其他条件不需要再加，scroll_id 已经有记录。因为只缓存 1m，必须在 1m 中查询，不然 scroll_id 会失效。
+
+``` json
+GET /_search/scroll
+{
+    "scroll": "1m", 
+    "scroll_id" : "DnF1ZXJ5VGhlbkZldGNoBQAAAAAAABtNFlMxdDcyNlVaVHBtMDhkWDVIakZIVHcAAAAAAAAbUxYtQUdCeVVCY1RBSzI3eDFjVVlaZXpnAAAAAAAAG08WUzF0NzI2VVpUcG0wOGRYNUhqRkhUdwAAAAAAABtUFi1BR0J5VUJjVEFLMjd4MWNVWVplemcAAAAAAAAbThZTMXQ3MjZVWlRwbTA4ZFg1SGpGSFR3"
+}
+```
+
+
+
 - 更新整个 Document（需要带上所有属性，注意细节，这里改了 product_name）：
 	- 这种方式的本质是：软删除。把旧版本标记为 deleted，实际还没物理删除，该条数据的 _version 元数据其实会再 +1 的。如果你再 PUT 下还是这个 ID 数据进去，_version 还是会继续 +1。当 Elasticsearch 数据越来越多，会物理删除这些标记的数据。
 
