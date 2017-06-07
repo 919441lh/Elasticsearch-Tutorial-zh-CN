@@ -261,9 +261,9 @@ GET /product_index/product/_search
 }
 ```
 
-- term 用法（与 match 进行对比）（查询的字段内容是不进行分词处理的，是完全匹配查询）：
-- 这个一般用在不分词字段上的。所以自己设置 mapping 的时候有些不分词的时候就最好设置上。
-- 一般这个不常用。设置 mapping 不分词后，用 match 效果也是一样的。
+- term 用法（与 match 进行对比）（term 一般用在不分词字段上的，因为它是完全匹配查询，如果要查询的字段是分词字段就会被拆分成各种分词结果，和完全查询的内容就对应不上了。）：
+- 所以自己设置 mapping 的时候有些不分词的时候就最好设置不分词。
+- 其实 Elasticsearch 5.X 之后给 text 类型的分词字段，又默认新增了一个子字段 keyword，这个字段的类型就是 keyword，是不分词的，默认保留 256 个字符。假设 product_name 是分词字段，那有一个 product_name.keyword 是不分词的字段，也可以用这个子字段来做完全匹配查询。
 
 ``` json
 GET /product_index/product/_search
@@ -271,6 +271,19 @@ GET /product_index/product/_search
   "query": {
     "term": {
       "product_name": "PHILIPS toothbrush"
+    }
+  }
+}
+
+GET /product_index/product/_search
+{
+  "query": {
+    "constant_score": {
+      "filter":{
+        "term": {
+          "product_name": "PHILIPS toothbrush"
+        }
+      }
     }
   }
 }
@@ -308,6 +321,7 @@ GET /product_index/_search
 ```
 
 - 只用 filter：
+- 下面语句使用了 constant_score 查询，它可以包含查询或过滤，为任意一个匹配的文档指定评分 1 ，忽略 TF/IDF 信息。还可以指定分数：<https://www.elastic.co/guide/cn/elasticsearch/guide/current/ignoring-tfidf.html>
 
 ``` json
 GET /product_index/product/_search
