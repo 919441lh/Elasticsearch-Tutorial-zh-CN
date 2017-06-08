@@ -211,6 +211,39 @@ GET /product_index/product/_search
   }
 }
 ```
+- match 还有一种情况，就是必须满足分词结果中所有的词，而不是像上面，任意一个就可以的。（**这个常见，所以很重要**）
+- 看下面的 JSON 其实你也可以猜出来，其实上面的 JSON 和下面的 JSON 本质是：operator 的差别，上面是 or，下面是 and 关系。
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "match": {
+      "product_name": {
+        "query": "PHILIPS toothbrush",
+        "operator": "and"
+      }
+     }
+   }
+}
+```
+
+- match 还还有一种情况，就是必须满足分词结果中百分比的词，比如搜索词被分成这样子：java 程序员 书 推荐，这里就有 4 个词，假如要求 50% 命中其中两个词就返回，我们可以这样：
+- 当然，这种需求也可以用 must、must_not、should 匹配同一个字段进行组合来查询
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "match": {
+      "product_name": {
+        "query": "java 程序员 书 推荐",
+        "minimum_should_match": "50%"
+      }
+    }
+  }
+}
+```
 
 - multi_match 用法：
 - 查询 product_name 和 product_desc 字段中，只要有：toothbrush 关键字的就查询出来。
@@ -289,6 +322,26 @@ GET /product_index/product/_search
 }
 ```
 
+- terms 用法，类似于数据库的 in
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "constant_score": {
+      "filter": {
+        "terms": {
+          "product_name": [
+            "toothbrush",
+            "shell"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
 ### query 和 filter 差异
 
 - 只用 query：
@@ -352,7 +405,7 @@ GET /product_index/product/_search
 
 ### 多搜索条件组合查询（最常用）
 
-- bool 下包括：must（必须匹配），must_not（必须不匹配），should（没有强制匹配），filter（过滤）
+- bool 下包括：must（必须匹配，类似于数据库的 =），must_not（必须不匹配，类似于数据库的 !=），should（没有强制匹配，类似于数据库的 or），filter（过滤）
 
 ``` json
 GET /product_index/product/_search
@@ -387,6 +440,41 @@ GET /product_index/product/_search
           }
         }
       }
+    }
+  }
+}
+```
+
+- should 有一个特殊性，如果组合查询中没有 must 条件，那么 should 中必须至少匹配一个。我们也还可以通过 minimum_should_match 来限制它匹配更多个。
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "match": {
+            "product_name": "java"
+          }
+        },
+        {
+          "match": {
+            "product_name": "程序员"
+          }
+        },
+        {
+          "match": {
+            "product_name": "书"
+          }
+        },
+        {
+          "match": {
+            "product_name": "推荐"
+          }
+        }
+      ],
+      "minimum_should_match": 3
     }
   }
 }
