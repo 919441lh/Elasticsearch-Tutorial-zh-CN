@@ -393,13 +393,14 @@ GET /product_index/product/_search
 }
 ```
 
-- query 和 filter 一起使用，看本文下面的：多搜索条件组合查询
+- query 和 filter 一起使用的话，filter 会先执行，看本文下面的：多搜索条件组合查询
 - 官网文档：<https://www.elastic.co/guide/en/elasticsearch/guide/current/_queries_and_filters.html>
 - 从搜索结果上看：
 	- filter，只查询出搜索条件的数据，不计算相关度分数
 	- query，查询出搜索条件的数据，并计算相关度分数，按照分数进行倒序排序
 - 从性能上看：
 	- filter（性能更好，无排序），无需计算相关度分数，也就无需排序，内置的自动缓存最常使用查询结果的数据
+		- 缓存的东西不是文档内容，而是 bitset，具体看：<https://www.elastic.co/guide/en/elasticsearch/guide/2.x/_finding_exact_values.html#_internal_filter_operation>
 	- query（性能较差，有排序），要计算相关度分数，按照分数进行倒序排序，没有缓存结果的功能
 	- filter 和 query 一起使用可以兼顾两者的特性，所以看你业务需求。
 
@@ -440,6 +441,35 @@ GET /product_index/product/_search
           }
         }
       }
+    }
+  }
+}
+
+GET /product_index/product/_search
+{
+  "query": {
+    "bool": {
+      "should": [
+        {
+          "term": {
+            "product_name": "飞利浦"
+          }
+        },
+        {
+          "bool": {
+            "must": [
+              {
+                "term": {
+                  "product_desc": "刷头"
+                },
+                "term": {
+                  "price": 30
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   }
 }
