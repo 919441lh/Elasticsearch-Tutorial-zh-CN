@@ -402,7 +402,7 @@ GET /product_index/product/_search
 	- filter（性能更好，无排序），无需计算相关度分数，也就无需排序，内置的自动缓存最常使用查询结果的数据
 		- 缓存的东西不是文档内容，而是 bitset，具体看：<https://www.elastic.co/guide/en/elasticsearch/guide/2.x/_finding_exact_values.html#_internal_filter_operation>
 	- query（性能较差，有排序），要计算相关度分数，按照分数进行倒序排序，没有缓存结果的功能
-	- filter 和 query 一起使用可以兼顾两者的特性，所以看你业务需求。
+	- filter 和 query 一起使用可以兼顾两者的特性，所以看你业务需求。324
 
 ### 多搜索条件组合查询（最常用）
 
@@ -571,6 +571,42 @@ GET /product_index/product/_search
 }
 ```
 
+- boost 用法（默认是 1）。在搜索精准度的控制上，还有一种需求，比如搜索：PHILIPS toothbrush，要比：Braun toothbrush 更加优先，我们可以这样：
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "product_name": "toothbrush"
+          }
+        }
+      ],
+      "should": [
+        {
+          "match": {
+            "product_name": {
+              "query": "PHILIPS",
+              "boost": 4
+            }
+          }
+        },
+        {
+          "match": {
+            "product_name": {
+              "query": "Braun",
+              "boost": 3
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```
 
 
 ## 其他资料辅助
