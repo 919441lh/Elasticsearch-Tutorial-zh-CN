@@ -608,6 +608,65 @@ GET /product_index/product/_search
 }
 ```
 
+- dis_max 用法，也称作：best fields 策略。
+- 由于查询关键字是会被分词的，默认 query bool 查询多个字段的语法时候，每个字段匹配到一个或多个的时候分数比：一个字段匹配到查询分词的所有结果的分数来的大。但是对于我们来讲这样的不够精准的。所以我们希望查询字段中，匹配的关键字越多排序越靠前，而不是每个字段查询了一个分词就排前，我们可以使用 dis_max。
+- 但是使用 dis_max，一般还不够，建议再加上 tie_breaker。
+- tie_breaker 是一个小数值，在 0~1 之间用来将其他查询结果分数，乘以 tie_breaker 的值，然后再综合与 dis_max 最高分数的的分数一起进行计算。除了取 dis_max 的最高分以外，还会考虑其他的查询结果的分数。
+- 在 dis_max 基础上，为了增加精准，我们还可以加上：boost、minimum_should_match 等相关参数。其中 minimum_should_match 比较常用，因为查询字段的分词中如果只有一个分词查询上了这种结果基本是没啥用的。
+- 官网资料：<https://www.elastic.co/guide/en/elasticsearch/guide/current/_best_fields.html>
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "dis_max": {
+      "queries": [
+        {
+          "match": {
+            "product_name": "PHILIPS toothbrush"
+          }
+        },
+        {
+          "match": {
+            "product_desc": "iphone shell"
+          }
+        }
+      ],
+      "tie_breaker": 0.2
+    }
+  }
+}
+
+GET /product_index/product/_search
+{
+  "query": {
+    "dis_max": {
+      "queries": [
+        {
+          "match": {
+            "product_name": {
+              "query": "PHILIPS toothbrush",
+              "minimum_should_match": "50%",
+              "boost": 3
+            }
+          }
+        },
+        {
+          "match": {
+            "product_desc": {
+              "query": "iphone shell",
+              "minimum_should_match": "50%"，
+              "boost": 2
+            }
+          }
+        }
+      ],
+      "tie_breaker": 0.3
+    }
+  }
+}
+```
+
 
 ## 其他资料辅助
 
