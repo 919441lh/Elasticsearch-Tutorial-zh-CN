@@ -263,8 +263,28 @@ GET /product_index/product/_search
 }
 ```
 
-- match_phrase 用法（与 match 进行对比）：
-- 查询的字段内容是进行分词处理的，分词的单词结果中，在数据中有满足所有的分词结果都会被查询出来
+- multi_match 跨多个 field 查询，表示查询分词必须出现在相同字段中。
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "multi_match": {
+      "query": "PHILIPS toothbrush",
+      "type": "cross_fields",
+      "operator": "and",
+      "fields": [
+        "product_name",
+        "product_desc"
+      ]
+    }
+  }
+}
+```
+
+
+- match_phrase 用法（短语搜索）（与 match 进行对比）：
+- 对这个查询词不进行分词，必须完全匹配查询词才可以作为结果显示。
 
 ``` json
 GET /product_index/product/_search
@@ -277,8 +297,11 @@ GET /product_index/product/_search
 }
 ```
 
-- match_phrase + slop（可调节因子用法）（与 match_phrase 进行对比）：
-- 查询的字段内容是进行分词处理的，分词的单词结果中，在数据中有满足所有的分词结果都会被查询出来，也可以少 1 个不匹配（通过 slop 设置可以不匹配多少个）。
+- match_phrase + slop（与 match_phrase 进行对比）：
+- 在说 slop 的用法之前，需要先说明原数据是：PHILIPS toothbrush HX6730/02，被分词后至少有：PHILIPS，toothbrush，HX6730 三个 term。
+- match_phrase 的用法我们上面说了，按理说查询的词必须完全匹配才能查询到，PHILIPS HX6730 很明显是不完全匹配的。
+- 但是有时候我们就是要这种不完全匹配，只要求他们尽可能靠谱，中间有几个单词是没啥问题的，那就可以用到 slop。slop = 2 表示中间如果间隔 2 个单词以内也算是匹配的结果（）。
+- 其实也不能称作间隔，应该说是移位，查询的关键字分词后移动多少位可以跟 doc 内容匹配，移动的次数就是 slop。所以 HX6730 PHILIPS 其实也是可以匹配到 doc 的，只是 slop = 5 才行。
 
 ``` json
 GET /product_index/product/_search
@@ -286,13 +309,65 @@ GET /product_index/product/_search
   "query": {
     "match_phrase": {
       "product_name" : {
-          "query" : "PHILIPS toothbrush",
+          "query" : "PHILIPS HX6730",
           "slop" : 1
       }
     }
   }
 }
 ```
+
+- match + match_phrase + slop 组合查询，使查询结果更加精准和结果更多
+- 但是 match_phrase 性能没有 match 好，所以一般需要先用 match 第一步进行过滤，然后在用 match_phrase 进行进一步匹配，并且重新打分，这里又用到了：rescore，window_size 表示对前 10 个进行重新打分
+- 下面第一个是未重新打分的，第二个是重新打分的
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "bool": {
+      "must": {
+        "match": {
+          "product_name": {
+            "query": "PHILIPS HX6730"
+          }
+        }
+      },
+      "should": {
+        "match_phrase": {
+          "product_name": {
+            "query": "PHILIPS HX6730",
+            "slop": 10
+          }
+        }
+      }
+    }
+  }
+}
+
+GET /product_index/product/_search
+{
+  "query": {
+    "match": {
+      "product_name": "PHILIPS HX6730"
+    }
+  },
+  "rescore": {
+    "window_size": 10,
+    "query": {
+      "rescore_query": {
+        "match_phrase": {
+          "product_name": {
+            "query": "PHILIPS HX6730",
+            "slop": 10
+          }
+        }
+      }
+    }
+  }
+}
+```
+
 
 - term 用法（与 match 进行对比）（term 一般用在不分词字段上的，因为它是完全匹配查询，如果要查询的字段是分词字段就会被拆分成各种分词结果，和完全查询的内容就对应不上了。）：
 - 所以自己设置 mapping 的时候有些不分词的时候就最好设置不分词。
