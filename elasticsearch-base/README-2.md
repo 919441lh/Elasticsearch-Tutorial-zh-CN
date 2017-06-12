@@ -27,7 +27,7 @@
 - 上一篇章我们已经安装了 Elasticsearch 和 Kibana，所以我们现在启动 Elasticsearch 和 Kibana 访问：<http://192.168.1.127:5601/app/kibana#/dev_tools/console?_g=()>，如下图：
 - 需要注意的细节是：Kibana Dev Tools 上面可以写多条 DSL 语句，光标放在哪一条上面，那一条后面有一个播放号可以单独执行，所以没必要删掉旧的语句。
 
-![Kibana Dev Tools](http://img.youmeek.com/2017/elasticsearch-cluster-1.jpg)
+<a href= "http://img.youmeek.com/2017/elasticsearch-cluster-1.jpg" class="foobox"><img src="http://img.youmeek.com/2017/elasticsearch-cluster-1.jpg" alt="Kibana Dev Tools"></a>
 
 - 查询集群健康状况：`GET /_cat/health?v`
 - 查询集群中有哪些索引：`GET /_cat/indices?v`
