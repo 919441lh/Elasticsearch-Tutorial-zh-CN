@@ -369,6 +369,23 @@ GET /product_index/product/_search
 ```
 
 
+- match_phrase_prefix 用法（不常用），一般用于类似 Google 搜索框，关键字输入推荐
+- max_expansions 用来限定最多匹配多少个 term，优化性能
+- 但是总体来说性能还是很差，因为还是会扫描整个倒排索引。推荐用 edge_ngram 做该功能
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "match_phrase_prefix": {
+      "product_name": "PHILIPS HX",
+      "slop": 5,
+      "max_expansions": 20
+    }
+  }
+}
+```
+
 - term 用法（与 match 进行对比）（term 一般用在不分词字段上的，因为它是完全匹配查询，如果要查询的字段是分词字段就会被拆分成各种分词结果，和完全查询的内容就对应不上了。）：
 - 所以自己设置 mapping 的时候有些不分词的时候就最好设置不分词。
 - 其实 Elasticsearch 5.X 之后给 text 类型的分词字段，又默认新增了一个子字段 keyword，这个字段的类型就是 keyword，是不分词的，默认保留 256 个字符。假设 product_name 是分词字段，那有一个 product_name.keyword 是不分词的字段，也可以用这个子字段来做完全匹配查询。
@@ -449,7 +466,8 @@ GET /product_index/_search
 ```
 
 - 只用 filter：
-- 下面语句使用了 constant_score 查询，它可以包含查询或过滤，为任意一个匹配的文档指定评分 1 ，忽略 TF/IDF 信息。还可以指定分数：<https://www.elastic.co/guide/cn/elasticsearch/guide/current/ignoring-tfidf.html>
+- 下面语句使用了 constant_score 查询，它可以包含查询或过滤，为任意一个匹配的文档指定评分 1 ，忽略 TF/IDF 信息，不需再计算评分。
+- 也还可以指定分数：<https://www.elastic.co/guide/cn/elasticsearch/guide/current/ignoring-tfidf.html>
 
 ``` json
 GET /product_index/product/_search
@@ -785,6 +803,28 @@ GET /product_index/product/_search
   }
 }
 ```
+
+- fuzzy 纠错查询
+- 参数 fuzziness 默认是 2，表示最多可以纠错两次，但是这个值不能很大，不然没效果。一般 AUTO 是自动纠错。
+- 下面的关键字漏了一个字母 o。
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "match": {
+      "product_name": {
+        "query": "PHILIPS tothbrush",
+        "fuzziness": "AUTO",
+        "operator": "and"
+      }
+    }
+  }
+}
+```
+
+
+
 
 
 ## 其他资料辅助
