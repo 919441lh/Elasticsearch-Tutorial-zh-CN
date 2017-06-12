@@ -1,7 +1,7 @@
 # 博文内容
 
-- 博文标题：1.5 Elasticsearch DSL 聚合相关
-- 博文地址：<http://www.youmeek.com/elasticsearch-introduction-and-install/>
+- 博文标题：1.5 Elasticsearch DSL 聚合语法介绍
+- 博文地址：<http://www.youmeek.com/elasticsearch-dsl-aggregation/>
 
 
 ## 课程环境

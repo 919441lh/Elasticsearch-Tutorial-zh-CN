@@ -1,7 +1,7 @@
 # 博文内容
 
-- 博文标题：1.7 Elasticsearch API
-- 博文地址：<http://www.youmeek.com/elasticsearch-introduction-and-install/>
+- 博文标题：1.8 Elasticsearch Java API
+- 博文地址：<http://www.youmeek.com/elasticsearch-java-api/>
 
 
 ## 课程环境
@@ -16,7 +16,7 @@
 ------------------------
 
 - 官网 API 支持列表：<https://www.elastic.co/guide/en/elasticsearch/client/index.html>
-
+- Github 地址（还在完善中）：<https://github.com/judasn/Elasticsearch-Tutorial-zh-CN>
 
 ## 其他资料辅助
 

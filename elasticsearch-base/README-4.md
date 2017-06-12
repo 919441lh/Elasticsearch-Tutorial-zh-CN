@@ -1,7 +1,7 @@
 # 博文内容
 
-- 博文标题：1.4 Elasticsearch DSL 简单用法
-- 博文地址：<http://www.youmeek.com/elasticsearch-introduction-and-install/>
+- 博文标题：1.4 Elasticsearch DSL 常用语法介绍
+- 博文地址：<http://www.youmeek.com/elasticsearch-dsl/>
 
 
 ## 课程环境

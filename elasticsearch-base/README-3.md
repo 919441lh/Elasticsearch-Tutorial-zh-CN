@@ -1,7 +1,7 @@
 # 博文内容
 
 - 博文标题：1.3 Elasticsearch Document（文档）的管理
-- 博文地址：<http://www.youmeek.com/elasticsearch-introduction-and-install/>
+- 博文地址：<http://www.youmeek.com/elasticsearch-document/>
 
 
 ## 课程环境
