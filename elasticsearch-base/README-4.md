@@ -823,7 +823,62 @@ GET /product_index/product/_search
 }
 ```
 
+## 自定义分词器
 
+- 自定义一个针对路径分词分词器（eg：/usr/local/nginx，会分词为：/usr/local/nginx，/usr/local，/usr）
+
+``` json
+PUT /order_index/order
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "custom_path_analyzer": {
+          "tokenizer": "path_hierarchy"
+        }
+      }
+    }
+  }
+}
+```
+
+- 校验下这个自定义分词器
+
+``` json
+GET /order_index/order/_analyze
+{
+  "text": "/usr/local/nginx",
+  "analyzer": "custom_path_analyzer"
+}
+```
+
+- 通过路径地址查询
+
+``` json
+GET /order_index/order/_search
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match": {
+            "order_num": "123456"
+          }
+        },
+        {
+          "constant_score": {
+            "filter": {
+              "term": {
+                "order_image_path": "/usr/local/nginx"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```
 
 
 

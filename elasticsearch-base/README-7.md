@@ -46,6 +46,76 @@ PUT /product_index/product/222
 }
 ```
 
+## index 锁
+
+- 适用于：不是频繁操作的地方
+- 官网：<https://www.elastic.co/guide/cn/elasticsearch/guide/current/concurrency-solutions.html>
+- 其两个界面都执行下面内容，会报：[lock][global]: version conflict, document already exists (current version [1])
+
+``` json
+PUT /product_index/lock/global/_create
+{
+}
+```
+
+- 上锁后，业务执行完成，要删除锁：
+
+``` json
+DELETE /product_index/lock/global
+```
+
+## document 锁
+
+- 官网：<https://www.elastic.co/guide/cn/elasticsearch/guide/current/concurrency-solutions.html>
+- 用脚本进行上锁
+- 在 Elasticsearch 安装目录下的 config/scripts 目录下创建一个：custom-lock.groovy，脚本内容：`if ( ctx._source.process_id != process_id ) { assert false }; ctx.op = 'noop';`
+- process_id 建议为自定义一个 UUID
+
+``` json
+POST /product_index/lock/1/_update
+{
+  "upsert": {
+    "process_id": "AAASSS"
+  },
+  "script": {
+    "lang": "groovy",
+    "file": "custom-lock",
+    "params": {
+      "process_id": "AAASSS"
+    }
+  }
+}
+```
+
+- 这时候其他地方是无法再上锁的。
+- 然后可以开始业务操作
+- 业务处理好，开始解锁：
+- 先 _refresh：`POST /product_index/_refresh`
+- 删除单条/多条上锁数据：
+- 先查询当前 process_id 上锁的数据有哪些：
+
+``` json
+GET /product_index/lock/_search?scroll=1m
+{
+  "query": {
+    "term": {
+      "process_id": "AAASSS"
+    }
+  }
+}
+```
+
+- 根据查询出来的 document id 进行删除：
+
+``` json
+PUT /product_index/lock/_bulk
+{ "delete": { "_id": 1 } }
+{ "delete": { "_id": 2 } }
+{ "delete": { "_id": 3 } }
+{ "delete": { "_id": 4 } }
+```
+
+
 ## 乐观锁相关概念
 
 
