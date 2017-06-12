@@ -742,6 +742,50 @@ GET /product_index/product/_search
 }
 ```
 
+- prefix 前缀搜索（性能较差，扫描所有倒排索引）
+- 比如有一个不分词字段 product_name，分别有两个 doc 是：iphone-6，iphone-7。我们搜索 iphone 这个前缀关键字就可以搜索到结果
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "prefix": {
+      "product_name": {
+        "value": "iphone"
+      }
+    }
+  }
+}
+```
+
+- 通配符搜索（性能较差，扫描所有倒排索引）
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "wildcard": {
+      "product_name": {
+        "value": "ipho*"
+      }
+    }
+  }
+}
+```
+
+- 正则搜索（性能较差，扫描所有倒排索引）
+
+``` json
+GET /product_index/product/_search
+{
+  "query": {
+    "regexp": {
+      "product_name": "iphone[0-9].+"
+    }
+  }
+}
+```
+
 
 ## 其他资料辅助
 
