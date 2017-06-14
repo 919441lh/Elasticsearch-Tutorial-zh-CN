@@ -92,7 +92,13 @@ PUT /product_index
           "term_vector": "with_positions_offsets",
           "analyzer": "ik_max_word",
           "search_analyzer": "ik_max_word",
-          "boost": 5
+          "boost": 5,
+          "fields": {
+            "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+            }
+          }
         },
         "product_desc": {
           "type": "text",
@@ -120,11 +126,6 @@ PUT /product_index
     }
   }
 }
-```
-
-
-``` json
-
 ```
 
 ## 其他资料辅助

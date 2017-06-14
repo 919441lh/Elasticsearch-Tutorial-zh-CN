@@ -5,6 +5,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.get.MultiGetItemResponse;
+import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateResponse;
@@ -36,8 +38,13 @@ public class BaseDemo {
 	@SuppressWarnings({"unchecked", "resource"})
 	public static void main(String[] args) throws IOException {
 		// 先构建client，两个参数分别是：cluster.name 固定参数代表后面参数的含义，集群名称
-		Settings settings = Settings.builder().put("cluster.name", "youmeek-cluster").build();
-
+		// client.transport.sniff 表示设置自动探查集群的集群节点
+		Settings settings = Settings.builder()
+				.put("cluster.name", "youmeek-cluster")
+				.put("client.transport.sniff", true)
+				.build();
+		
+		//单个节点的写法
 		TransportClient transportClient = new PreBuiltTransportClient(settings).addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("192.168.1.127"), 9300));
 
 		create(transportClient);
@@ -116,6 +123,32 @@ public class BaseDemo {
 	private static void query(TransportClient transportClient) throws IOException {
 		GetResponse getResponse = transportClient.prepareGet("product_index", "product", "1").get();
 		logger.info("--------------------------------：" + getResponse.getSourceAsString());
+	}
+
+	/**
+	 * 获取多个对象（根据ID）
+	 *
+	 * @param transportClient
+	 * @throws IOException
+	 */
+	private static void queryByMultiGet(TransportClient transportClient) throws IOException {
+
+		MultiGetResponse multiGetItemResponses = transportClient.prepareMultiGet()
+				.add("product_index", "product", "1")
+				.add("product_index", "product", "2")
+				.add("product_index", "product", "3")
+				.add("product_index", "product", "4")
+				.add("product_index", "product", "5")
+				.get();
+
+		String resultJSON = null;
+		for (MultiGetItemResponse multiGetItemResponse : multiGetItemResponses) {
+			GetResponse getResponse = multiGetItemResponse.getResponse();
+			if (getResponse.isExists()) {
+				resultJSON = getResponse.getSourceAsString();
+			}
+		}
+		logger.info("--------------------------------：" + resultJSON);
 	}
 
 	/**
