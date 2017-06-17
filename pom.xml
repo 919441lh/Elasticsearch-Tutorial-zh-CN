@@ -12,6 +12,7 @@
     
     <modules>
         <module>elasticsearch-base</module>
+        <module>elasticsearch-gis</module>
     </modules>
 
 
